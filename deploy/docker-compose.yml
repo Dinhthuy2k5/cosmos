@@ -1,0 +1,31 @@
+# deploy/docker-compose.yml
+version: '3.8'
+
+services:
+  astral-web:
+    image: nginx:alpine
+    container_name: astral-web
+    restart: unless-stopped
+    volumes:
+      # Đường dẫn này là đường dẫn TRÊN SERVER khi chạy
+      - /home/ubuntu/astral-web/dist:/usr/share/nginx/html:ro
+      - /home/ubuntu/astral-web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - iaa-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.astral.entrypoints=websecure"
+      - "traefik.http.routers.astral.rule=Host(`astral.duckdns.org`)"
+      - "traefik.http.routers.astral.tls=true"
+      - "traefik.http.routers.astral.tls.certresolver=myresolver"
+      - "traefik.http.services.astral.loadbalancer.server.port=80"
+      # Redirect HTTP → HTTPS
+      - "traefik.http.middlewares.astral-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.astral-http.entrypoints=web"
+      - "traefik.http.routers.astral-http.rule=Host(`astral.duckdns.org`)"
+      - "traefik.http.routers.astral-http.middlewares=astral-redirect"
+
+networks:
+  iaa-network:
+    external: true
+    name: iaa_default # ← Đổi thành tên mạng thực tế (xem hướng dẫn bên dưới)
