@@ -45,15 +45,18 @@ export default function Home() {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
 
-    // Clip-path mở vòng tròn từ 0% đến 150%
+    // ===== CLIP-PATH & BACKGROUND =====
     const clipPathSize = useTransform(scrollYProgress, [0, 1], ["0%", "150%"]);
-    const backgroundScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-    const textY = useTransform(scrollYProgress, [0, 1], ["0%", "60%"]);
-    // Fade chữ lớp 1 biến mất dần khi vòng tròn mở
-    const layer1Opacity = useTransform(scrollYProgress, [0, 0.35], [1, 0]);
-    // Fade chữ lớp 2 xuất hiện
-    const layer2Opacity = useTransform(scrollYProgress, [0.1, 0.4], [0, 1]);
-    const layer2Scale = useTransform(scrollYProgress, [0, 1], [0.9, 1.05]);
+    const backgroundScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+
+    // ===== LỚP 1: giữ nguyên, rồi mờ hẳn trước khi lớp 2 xuất hiện =====
+    const textY1 = useTransform(scrollYProgress, [0, 0.4], ["0%", "40%"]);
+    const layer1Opacity = useTransform(scrollYProgress, [0, 0.15, 0.3], [1, 1, 0]);
+
+    // ===== LỚP 2: chỉ xuất hiện SAU khi lớp 1 đã tắt =====
+    const textY2 = useTransform(scrollYProgress, [0.25, 0.5], ["10%", "0%"]);
+    const layer2Opacity = useTransform(scrollYProgress, [0.28, 0.45], [0, 1]);
+    const layer2Scale = useTransform(scrollYProgress, [0.28, 0.6], [0.95, 1]);
 
     const logos = [
         { name: "NASA", icon: Rocket },
@@ -98,7 +101,7 @@ export default function Home() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-b from-[#0c1128]/40 via-transparent to-[#0c1128]/60" />
                         <motion.div
-                            style={{ y: textY, opacity: layer1Opacity }}
+                            style={{ y: textY1, opacity: layer1Opacity }}
                             className="z-10 text-center px-4 [transform-style:preserve-3d]"
                         >
                             <motion.div
@@ -134,7 +137,7 @@ export default function Home() {
 
                         {/* Chữ mới xuất hiện khi vòng tròn mở ra */}
                         <motion.div
-                            style={{ y: textY, opacity: layer2Opacity, scale: layer2Scale }}
+                            style={{ y: textY2, opacity: layer2Opacity, scale: layer2Scale }}
                             className="z-10 text-center px-4 [transform-style:preserve-3d]"
                         >
                             <motion.div
