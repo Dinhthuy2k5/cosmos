@@ -8,6 +8,7 @@ import ArticleSection from './ArticleSection';
 import QuoteBlock from './QuoteBlock';
 import StatCounter from './StatCounter';
 import InfoCard3D from './InfoCard3D';
+import FormulaCard from './FormulaCard';
 
 // === THANH ĐỌC TIẾN TRÌNH ===
 function ReadingProgress({ color }) {
@@ -129,6 +130,27 @@ export default function ArticleLayout({
                                 <StatCounter
                                     stats={sec.items}
                                     columns={sec.items.length >= 4 ? 4 : 3}
+                                />
+                            </motion.div>
+                        );
+                    }
+
+                    // === FORMULA ===
+                    if (sec.type === "formula") {
+                        return (
+                            <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                transition={{ duration: 0.8 }}
+                            >
+                                <FormulaCard
+                                    formula={sec.formula}
+                                    meaning={sec.meaning}
+                                    variables={sec.variables}
+                                    example={sec.example}
+                                    color={accentColor}
                                 />
                             </motion.div>
                         );
